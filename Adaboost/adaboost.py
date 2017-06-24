@@ -1,5 +1,5 @@
 from numpy import *
-from boost import buildStump
+from boost import *
 
 def loadSimpData():
     data_mat = matrix([[1.  ,  2.1],
@@ -39,5 +39,21 @@ def adaBoostTrainDS(data_arr,class_labels,num_it=40):
 
 	return weak_class_arr
 
+def adaClassify(data,classifier_arr):
+	data_mat = mat(data)
+	m = shape(data_mat)[0]
+	agg_class_est = mat(zeros((m,1)))
+	for i in range(len(classifier_arr)):
+		class_est = stumpClassify(data_mat,classifier_arr[i]['dim'],classifier_arr[i]['thresh'],classifier_arr[i]['ineq'])
+		agg_class_est += classifier_arr[i]['alpha']*class_est
+
+		print(agg_class_est)
+
+	return sign(agg_class_est)
+
 data_mat,class_labels = loadSimpData()
 weak_class_arr = adaBoostTrainDS(data_mat,class_labels)
+predict = adaClassify(data_mat,weak_class_arr)
+
+print(class_labels)
+print(predict)
