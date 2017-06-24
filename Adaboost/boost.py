@@ -1,6 +1,6 @@
 from numpy import *
 
-def stumpClassify(data_matrix, dimen, thresh_val, thresh_ineq):
+def stumpContinuesClassify(data_matrix, dimen, thresh_val, thresh_ineq):
 	ret_array = ones((shape(data_matrix)[0],1))
 
 	if thresh_ineq == 'lt':
@@ -10,7 +10,14 @@ def stumpClassify(data_matrix, dimen, thresh_val, thresh_ineq):
 
 	return ret_array
 
-def buildStump(data_arr, class_labels, D):
+def stumpDiscreteClassify(data_matrix, dimen, val):
+	ret_array = zeros((shape(data_matrix)[0],1))
+
+	ret_array[data_matrix[:,dimen] == val] = 1
+
+	return ret_array
+
+def buildContinuesStump(data_arr, class_labels, D):
 	data_matrix = mat(data_arr)
 	label_mat = mat(class_labels).T
 
@@ -42,6 +49,32 @@ def buildStump(data_arr, class_labels, D):
 					best_stump['dim'] = i
 					best_stump['thresh'] = thresh_val
 					best_stump['ineq'] = inequal
+
+	return best_stump,min_error,best_clas_est
+
+def buildDiscreteStump(data_arr, class_labels, D):
+	data_matrix = mat(data_arr)
+	label_mat = mat(class_labels).T
+
+	m,n = shape(data_matrix)
+	best_stump = {}
+	best_clas_est = mat(zeros((m,1)))
+	min_error = inf
+
+	for i in range(n):
+		for feature in (1.0,0.0):
+			predicted_vals = stumpDiscreteClassify(data_matrix,i,feature)
+
+			err_arr = mat(ones((m,1)))
+			# array filtrate
+			err_arr[predicted_vals == label_mat] = 0
+			weighted_error = D.T * err_arr
+
+			if weighted_error < min_error:
+				min_error = weighted_error
+				best_clas_est = predicted_vals.copy()
+				best_stump['dim'] = i
+				best_stump['thresh'] = feature
 
 	return best_stump,min_error,best_clas_est
 
