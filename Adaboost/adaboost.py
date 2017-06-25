@@ -20,7 +20,9 @@ def loadSimpData():
 			img = ones(shape(old_img))
 			img[old_img <= 128] = 0
 			data_array.append(img)
-			class_label.append(label)
+
+			if label == 0:
+				class_label.append(-1)
 
 			i += 1
 
@@ -64,6 +66,7 @@ def adaBoostDiscreteTrainDS(data_arr,class_labels,num_it=40):
 		best_stump,error,class_est = buildDiscreteStump(data_arr,class_labels,D)
 		# print("D:",D.T)
 		alpha = float(0.5*log((1.0-error)/max(error,1e-16)))
+		print(alpha)
 		best_stump['alpha'] = alpha
 		weak_class_arr.append(best_stump)
 		# print("classEst: ",class_est.T)

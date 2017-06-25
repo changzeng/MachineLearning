@@ -69,6 +69,7 @@ def buildDiscreteStump(data_arr, class_labels, D):
 			# array filtrate
 			err_arr[predicted_vals == label_mat] = 0
 			weighted_error = D.T * err_arr
+			# print(shape(weighted_error))
 
 			if weighted_error < min_error:
 				min_error = weighted_error
